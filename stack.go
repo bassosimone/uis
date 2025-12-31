@@ -139,3 +139,8 @@ func stackAddrPortToNetworkProtocolNumber(epnt netip.AddrPort) tcpip.NetworkProt
 		return ipv6.ProtocolNumber
 	}
 }
+
+// Close closes the resources used by the [*Stack].
+func (sx *Stack) Close() {
+	sx.Stack.Close()
+}

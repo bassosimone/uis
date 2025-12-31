@@ -1,0 +1,80 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+package uis_test
+
+import (
+	"context"
+	"fmt"
+	"net/netip"
+	"sync"
+
+	"github.com/bassosimone/runtimex"
+	"github.com/bassosimone/uis"
+)
+
+// This example creates a client and the server and the client
+// downloads a small number of bytes from the server.
+func Example_clientDownload() {
+	// create the internet and router instance.
+	ix := uis.NewInternet(uis.InternetOptionMaxInflight(256))
+
+	// create the server and client stacks
+	const mtu = uis.MTUJumbo
+	srv := runtimex.PanicOnError1(ix.NewStack(mtu, netip.MustParseAddr("10.0.0.1")))
+	defer srv.Close()
+
+	clnt := runtimex.PanicOnError1(ix.NewStack(mtu, netip.MustParseAddr("10.0.0.2")))
+	defer clnt.Close()
+
+	// run the server in the background
+	wg := &sync.WaitGroup{}
+	ready := make(chan struct{})
+	wg.Go(func() {
+		listener := runtimex.PanicOnError1(srv.ListenTCP(netip.MustParseAddrPort("10.0.0.1:80")))
+		close(ready)
+		conn := runtimex.PanicOnError1(listener.Accept())
+		message := []byte("Hello, world!\n")
+		_ = runtimex.PanicOnError1(conn.Write(message))
+		runtimex.PanicOnError0(conn.Close())
+		runtimex.PanicOnError0(listener.Close())
+	})
+
+	// run the client in the background
+	messagech := make(chan []byte, 1)
+	wg.Go(func() {
+		<-ready
+		ctx := context.Background()
+		conn := runtimex.PanicOnError1(clnt.DialTCP(ctx, netip.MustParseAddrPort("10.0.0.1:80")))
+		buffer := make([]byte, 1024)
+		count := runtimex.PanicOnError1(conn.Read(buffer))
+		messagech <- buffer[:count]
+		runtimex.PanicOnError0(conn.Close())
+	})
+
+	// know when both goroutines have stopped
+	stopped := make(chan struct{})
+	go func() {
+		wg.Wait()
+		close(stopped)
+	}()
+
+	// route packets in the foreground
+loop:
+	for {
+		select {
+		case frame := <-ix.InFlight():
+			// Here is where you'll potentially mess with packets
+			_ = ix.Deliver(frame)
+		case <-stopped:
+			break loop
+		}
+	}
+
+	// receive and print the server message
+	message := <-messagech
+	fmt.Printf("%s", string(message))
+
+	// Output:
+	// Hello, world!
+	//
+}
