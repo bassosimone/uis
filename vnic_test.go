@@ -66,6 +66,16 @@ func TestVNICInterfaceMethods(t *testing.T) {
 	require.NotPanics(t, vnic.Wait)
 }
 
+func TestVNICCloseCallsHook(t *testing.T) {
+	vnic := uis.NewVNIC(uis.MTUEthernet, nil)
+	called := atomic.Uint32{}
+	vnic.SetOnCloseAction(func() {
+		called.Add(1)
+	})
+	vnic.Close()
+	assert.Equal(t, uint32(1), called.Load())
+}
+
 func TestVNICInjectFrameDiscardCases(t *testing.T) {
 	t.Run("zero_length", func(t *testing.T) {
 		vnic := uis.NewVNIC(uis.MTUEthernet, nil)
