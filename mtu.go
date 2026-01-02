@@ -11,5 +11,5 @@ const (
 	MTUMinimumIPv6 = 1280
 
 	// MTUJumo is the MTU used by jumbo frames.
-	MTUJumbo = 900
+	MTUJumbo = 9000
 )
