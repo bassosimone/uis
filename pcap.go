@@ -135,30 +135,32 @@ func (tr *PCAPTrace) saveLoop(ctx context.Context) {
 	}
 
 	// Loop until we're done and write each entry.
-	//
-	// Make sure we drain the buffer on exit.
 	for {
-		select {
-		case <-ctx.Done():
-			for {
-				select {
-				case snap := <-tr.snaps:
-					if err := tr.savePacket(w, snap); err != nil {
-						tr.errch <- nil
-						return
-					}
-				default:
-					tr.errch <- nil
-					return
-				}
-			}
-
-		case snap := <-tr.snaps:
-			if err := tr.savePacket(w, snap); err != nil {
-				tr.errch <- nil
-				return
-			}
+		snap, ok := tr.readOrDrain(ctx)
+		if !ok {
+			tr.errch <- nil
+			return
 		}
+		if err := tr.savePacket(w, snap); err != nil {
+			tr.errch <- err
+			return
+		}
+	}
+}
+
+// readOrDrain reads the channel in blocking mode until the context is done and
+// then switches to nonblocking mode until the channel is empty.
+func (tr *PCAPTrace) readOrDrain(ctx context.Context) (pcapSnapshot, bool) {
+	select {
+	case <-ctx.Done():
+		select {
+		case snap := <-tr.snaps:
+			return snap, true
+		default:
+			return pcapSnapshot{}, false
+		}
+	case snap := <-tr.snaps:
+		return snap, true
 	}
 }
 

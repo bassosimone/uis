@@ -3,6 +3,7 @@ module github.com/bassosimone/uis
 go 1.25.5
 
 require (
+	github.com/bassosimone/iotest v0.0.0-20260102113406-350280d0bb75
 	github.com/bassosimone/runtimex v0.0.0-20251217192325-70882b9ab4d3
 	github.com/google/gopacket v1.1.19
 	github.com/stretchr/testify v1.11.1
