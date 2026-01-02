@@ -28,8 +28,8 @@ type pcapSnapshot struct {
 	length int
 }
 
-// PcapTrace is an open pcap trace.
-type PcapTrace struct {
+// PCAPTrace is an open PCAP trace.
+type PCAPTrace struct {
 	// cancel allows to cancel the background goroutine.
 	cancel context.CancelFunc
 
@@ -52,12 +52,12 @@ type PcapTrace struct {
 	wc io.WriteCloser
 }
 
-// NewPcapTrace creates a new [*PcapTrace] instance.
-func NewPcapTrace(wc io.WriteCloser, snapSize uint16) *PcapTrace {
+// NewPCAPTrace creates a new [*PCAPTrace] instance.
+func NewPCAPTrace(wc io.WriteCloser, snapSize uint16) *PCAPTrace {
 	// Initialize the trace struct
 	ctx, cancel := context.WithCancel(context.Background())
 	const manyPackets = 4096
-	tr := &PcapTrace{
+	tr := &PCAPTrace{
 		cancel:   cancel,
 		dropped:  atomic.Uint64{},
 		errch:    make(chan error, 1),
@@ -73,7 +73,7 @@ func NewPcapTrace(wc io.WriteCloser, snapSize uint16) *PcapTrace {
 }
 
 // Dump dumps the information about the given raw IPv4/IPv6 packet.
-func (tr *PcapTrace) Dump(packet []byte) {
+func (tr *PCAPTrace) Dump(packet []byte) {
 	snapSize := min(len(packet), int(tr.snapSize))
 	packetSnap := make([]byte, snapSize)
 	copy(packetSnap, packet)
@@ -88,12 +88,12 @@ func (tr *PcapTrace) Dump(packet []byte) {
 //
 // Packets are dropped when Dump is called but the internal buffer is full.
 // This happens when disk I/O cannot keep up with packet capture rate.
-func (tr *PcapTrace) Dropped() uint64 {
+func (tr *PCAPTrace) Dropped() uint64 {
 	return tr.dropped.Load()
 }
 
 // saveLoop is the loop that dumps packets
-func (tr *PcapTrace) saveLoop(ctx context.Context) {
+func (tr *PCAPTrace) saveLoop(ctx context.Context) {
 	// Write the PCAP header
 	w := pcapgo.NewWriter(tr.wc)
 	if err := w.WriteFileHeader(uint32(tr.snapSize), layers.LinkTypeRaw); err != nil {
@@ -129,7 +129,7 @@ func (tr *PcapTrace) saveLoop(ctx context.Context) {
 	}
 }
 
-func (tr *PcapTrace) savePacket(w *pcapgo.Writer, pinfo pcapSnapshot) error {
+func (tr *PCAPTrace) savePacket(w *pcapgo.Writer, pinfo pcapSnapshot) error {
 	ci := gopacket.CaptureInfo{
 		Timestamp:      time.Now(),
 		CaptureLength:  len(pinfo.data),
@@ -142,7 +142,7 @@ func (tr *PcapTrace) savePacket(w *pcapgo.Writer, pinfo pcapSnapshot) error {
 
 // Close interrupts the background goroutine and waits for it to join
 // before closing the packet capture file.
-func (tr *PcapTrace) Close() (err error) {
+func (tr *PCAPTrace) Close() (err error) {
 	tr.once.Do(func() {
 		// notify the background goroutine to terminate
 		tr.cancel()

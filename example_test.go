@@ -65,7 +65,7 @@ func Example_tcpDownloadIPv4() {
 
 	// route and capture packets in the foreground
 	traceFile := runtimex.PanicOnError1(os.Create("tcpDownloadIPv4.pcap"))
-	trace := uis.NewPcapTrace(traceFile, uis.MTUJumbo)
+	trace := uis.NewPCAPTrace(traceFile, uis.MTUJumbo)
 loop:
 	for {
 		select {
@@ -140,7 +140,7 @@ func Example_udpEchoIPv4() {
 
 	// route and capture packets in the foreground
 	traceFile := runtimex.PanicOnError1(os.Create("udpEchoIPv4.pcap"))
-	trace := uis.NewPcapTrace(traceFile, uis.MTUJumbo)
+	trace := uis.NewPCAPTrace(traceFile, uis.MTUJumbo)
 loop:
 	for {
 		select {
@@ -215,7 +215,7 @@ func Example_udpEchoIPv6() {
 
 	// route and capture packets in the foreground
 	traceFile := runtimex.PanicOnError1(os.Create("udpEchoIPv6.pcap"))
-	trace := uis.NewPcapTrace(traceFile, uis.MTUJumbo)
+	trace := uis.NewPCAPTrace(traceFile, uis.MTUJumbo)
 loop:
 	for {
 		select {

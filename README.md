@@ -63,7 +63,7 @@ go func() {
 
 // Route and capture packets between stacks until both sides finish.
 traceFile := runtimex.PanicOnError1(os.Create("capture.pcap"))
-trace := uis.NewPcapTrace(traceFile, uis.MTUEthernet)
+trace := uis.NewPCAPTrace(traceFile, uis.MTUEthernet)
 loop:
 for {
 	select {

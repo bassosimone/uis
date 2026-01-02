@@ -25,6 +25,6 @@
 // On the application level side, a [*Stack] allows to create basic TCP and
 // UDP connections via methods such as [*Stack.DialTCP].
 //
-// The [*PcapTrace] type allows you to capture packets in flight in a PCAP format
+// The [*PCAPTrace] type allows you to capture packets in flight in a PCAP format
 // so that you can inspect what happened using tools such as wireshark.
 package uis
