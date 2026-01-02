@@ -52,16 +52,49 @@ type PCAPTrace struct {
 	wc io.WriteCloser
 }
 
+// PCAPTraceOption is an option for [NewPCAPTrace].
+type PCAPTraceOption func(cfg *pcapTraceConfig)
+
+// pcapTraceConfig is the internal type modified by [PCAPTraceOption].
+type pcapTraceConfig struct {
+	bufferSize int
+}
+
+// PCAPTraceOptionBuffer sets the buffer size for the internal packet channel.
+//
+// The default is 4096 snapshots. When the buffer is full, new snapshots are
+// dropped and counted using [*PCAPTrace.Dropped].
+//
+// A zero or negative value is silently ignored.
+func PCAPTraceOptionBuffer(bufferSize int) PCAPTraceOption {
+	return func(cfg *pcapTraceConfig) {
+		if bufferSize > 0 {
+			cfg.bufferSize = bufferSize
+		}
+	}
+}
+
 // NewPCAPTrace creates a new [*PCAPTrace] instance.
-func NewPCAPTrace(wc io.WriteCloser, snapSize uint16) *PCAPTrace {
+//
+// Takes ownership of the [io.WriteCloser] and ensures the file is closed and
+// flushed when you invoke the [*PCAPTrace.Close] method.
+//
+// We recommend using a large snapshot size for inspecting the full packets
+// that are exchanged by the [*Stack] you are using in your tests.
+func NewPCAPTrace(wc io.WriteCloser, snapSize uint16, options ...PCAPTraceOption) *PCAPTrace {
 	// Initialize the trace struct
 	ctx, cancel := context.WithCancel(context.Background())
-	const manyPackets = 4096
+	cfg := &pcapTraceConfig{
+		bufferSize: 4096,
+	}
+	for _, opt := range options {
+		opt(cfg)
+	}
 	tr := &PCAPTrace{
 		cancel:   cancel,
 		dropped:  atomic.Uint64{},
 		errch:    make(chan error, 1),
-		snaps:    make(chan pcapSnapshot, manyPackets),
+		snaps:    make(chan pcapSnapshot, cfg.bufferSize),
 		once:     sync.Once{},
 		snapSize: snapSize,
 		wc:       wc,
