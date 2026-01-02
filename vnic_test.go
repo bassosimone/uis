@@ -102,3 +102,86 @@ func TestVNICInjectFrameDiscardCases(t *testing.T) {
 		assert.Zero(t, disp.count.Load())
 	})
 }
+
+type countingNetwork struct {
+	allow bool
+	count atomic.Uint32
+}
+
+func (n *countingNetwork) SendFrame(uis.VNICFrame) bool {
+	n.count.Add(1)
+	return n.allow
+}
+
+func makePacketList(payloads ...[]byte) stack.PacketBufferList {
+	var list stack.PacketBufferList
+	for _, payload := range payloads {
+		list.PushBack(stack.NewPacketBuffer(stack.PacketBufferOptions{
+			Payload: buffer.MakeWithData(payload),
+		}))
+	}
+	return list
+}
+
+func TestVNICWritePacketsCases(t *testing.T) {
+	t.Run("closed", func(t *testing.T) {
+		net := &countingNetwork{allow: true}
+		vnic := uis.NewVNIC(uis.MTUEthernet, net)
+		vnic.Close()
+
+		pkts := makePacketList([]byte{0x45})
+		defer pkts.DecRef()
+		num, err := vnic.WritePackets(pkts)
+		require.True(t, err != nil)
+		require.True(t, err.String() == (&tcpip.ErrNoNet{}).String())
+		assert.Equal(t, 0, num)
+		assert.Zero(t, net.count.Load())
+	})
+
+	t.Run("no_network", func(t *testing.T) {
+		vnic := uis.NewVNIC(uis.MTUEthernet, nil)
+
+		pkts := makePacketList([]byte{0x45})
+		defer pkts.DecRef()
+		num, err := vnic.WritePackets(pkts)
+		require.True(t, err != nil)
+		require.True(t, err.String() == (&tcpip.ErrNoNet{}).String())
+		assert.Equal(t, 0, num)
+	})
+
+	t.Run("zero_length_payload", func(t *testing.T) {
+		net := &countingNetwork{allow: true}
+		vnic := uis.NewVNIC(uis.MTUEthernet, net)
+
+		pkts := makePacketList([]byte{})
+		defer pkts.DecRef()
+		num, err := vnic.WritePackets(pkts)
+		require.True(t, err == nil)
+		assert.Equal(t, 0, num)
+		assert.Zero(t, net.count.Load())
+	})
+
+	t.Run("larger_than_mtu", func(t *testing.T) {
+		net := &countingNetwork{allow: true}
+		vnic := uis.NewVNIC(1, net)
+
+		pkts := makePacketList([]byte{0x45, 0x00})
+		defer pkts.DecRef()
+		num, err := vnic.WritePackets(pkts)
+		require.True(t, err == nil)
+		assert.Equal(t, 0, num)
+		assert.Zero(t, net.count.Load())
+	})
+
+	t.Run("send_frame_fails", func(t *testing.T) {
+		net := &countingNetwork{allow: false}
+		vnic := uis.NewVNIC(uis.MTUEthernet, net)
+
+		pkts := makePacketList([]byte{0x45})
+		defer pkts.DecRef()
+		num, err := vnic.WritePackets(pkts)
+		require.True(t, err == nil)
+		assert.Equal(t, 0, num)
+		assert.Equal(t, uint32(1), net.count.Load())
+	})
+}

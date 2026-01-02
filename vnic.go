@@ -195,7 +195,7 @@ func (n *VNIC) WritePackets(pkts stack.PacketBufferList) (int, tcpip.Error) {
 
 	// 2. bail if the stack has been closed or there's no internet
 	if isclosed || network == nil {
-		return 0, nil
+		return 0, &tcpip.ErrNoNet{}
 	}
 
 	// 3. try sending the packets
