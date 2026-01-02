@@ -48,6 +48,14 @@ type PCAPTrace struct {
 	// snapSize is the number of bytes to capture.
 	snapSize uint16
 
+	// testCancellationDrainHook is an OPTIONAL hook executed
+	// once we have determined that the context is canceled and
+	// before trying to drain the snaps channel.
+	//
+	// This hook allows to reliably test that we drain after the
+	// context has been canceled deterministically.
+	testCancellationDrainHook func()
+
 	// wc is the open writer we're using.
 	wc io.WriteCloser
 }
@@ -153,6 +161,9 @@ func (tr *PCAPTrace) saveLoop(ctx context.Context) {
 func (tr *PCAPTrace) readOrDrain(ctx context.Context) (pcapSnapshot, bool) {
 	select {
 	case <-ctx.Done():
+		if tr.testCancellationDrainHook != nil {
+			tr.testCancellationDrainHook()
+		}
 		select {
 		case snap := <-tr.snaps:
 			return snap, true
