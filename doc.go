@@ -11,6 +11,11 @@
 // to create two or more [*Stack] instances. The created instances are already
 // configured for sending and receiving raw internet packets.
 //
+// The [Connector] type is a stdlib-like dialer for IP literal endpoints only.
+// The [ListenConfig] type is a stdlib-like listener config for IP literal
+// endpoints only. Use these types to plug this package into higher-level
+// code that expects the net package interfaces.
+//
 // To route packets, you need to read packets using [*Internet.InFlight]. If
 // you choose to forward the read packets, then you can deliver them to the right
 // destination using [*Internet.Deliver]. We don't model L2 frames (we just move

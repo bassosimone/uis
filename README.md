@@ -34,10 +34,12 @@ clientStack := runtimex.PanicOnError1(internet.NewStack(uis.MTUEthernet, clientA
 defer clientStack.Close()
 
 // Start the server goroutine.
+ctx := context.Background()
 wg := &sync.WaitGroup{}
 ready := make(chan struct{})
 wg.Go(func() {
-	listener := runtimex.PanicOnError1(serverStack.ListenTCP(serverEndpoint))
+	listenCfg := uis.NewListenConfig(serverStack)
+	listener := runtimex.PanicOnError1(listenCfg.Listen(ctx, "tcp", serverEndpoint.String()))
 	close(ready)
 	conn := runtimex.PanicOnError1(listener.Accept())
 	// TODO: do something with the conn
@@ -46,8 +48,8 @@ wg.Go(func() {
 // Start the client goroutine.
 wg.Go(func() {
 	<-ready
-	ctx := context.Background()
-	conn := runtimex.PanicOnError1(clientStack.DialTCP(ctx, serverEndpoint))
+	connector := uis.NewConnector(clientStack)
+	conn := runtimex.PanicOnError1(connector.DialContext(ctx, "tcp", serverEndpoint.String()))
 	// TODO: do something with the conn
 })
 
@@ -72,6 +74,63 @@ for {
 ```
 
 The [example_test.go](example_test.go) file shows a complete example.
+
+## Stdlib Compatibility
+
+- Connector: a stdlib-like dialer for IP literal endpoints only.
+- ListenConfig: a stdlib-like listener config for IP literal endpoints only.
+
+Because we implement these two fundamental stdlib-like interfaces, `uis` is
+suitable to be used *instead of* stdlib-based code in tests. Common networking
+code could depend on `DialContext`, `Listen`, and `ListenPacket` like
+functions. For example:
+
+```go
+// This is how you could define a Dialer that uses either the [*net.Dialer]
+// or [*uis.Connector] to establish TCP/UDP connections.
+
+type Connector interface {
+	DialContext(ctx context.Context, network, address string) (net.Conn, error)
+}
+
+type Resolver interface {
+	LookupHost(ctx context.Context, name string) ([]string, error)
+}
+
+type Dialer struct {
+	Connector Connector
+	Resolver  Resolver
+}
+
+func (d *Dialer) DialContext(ctx context.Context, network, address string) (net.Conn, error) {
+	host, port, err := net.SplitHostPort(address)
+	if err != nil {
+		return nil, err
+	}
+	addrs, err := d.Resolver.LookupHost(ctx, host)
+	if err != nil {
+		return nil, err
+	}
+	for _, addr := range addrs {
+		conn, err := d.Connector.DialContext(ctx, network, net.JoinHostPort(addr, port))
+		if err != nil {
+			continue
+		}
+		return conn, nil
+	}
+	return nil, errors.New("dial failed")
+}
+
+// This is how you would use the above code in production
+dialerProd := &Dialer{Connector: &net.Dialer{}, Resolver: &net.Resolver{}}
+
+// This is instead how you would use the above code for tests
+// assuming you also implemented a Resolver based on `uis`.
+dialerTests := &Dialer{
+	Connector: uis.NewConnector(stack),
+	Resolver: NewUISResolver(stack),
+}
+```
 
 ## Installation
 

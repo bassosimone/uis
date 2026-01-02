@@ -26,11 +26,15 @@ func Example_clientDownload() {
 	clnt := runtimex.PanicOnError1(ix.NewStack(mtu, netip.MustParseAddr("10.0.0.2")))
 	defer clnt.Close()
 
+	// create a context used by connector and listener
+	ctx := context.Background()
+
 	// run the server in the background
 	wg := &sync.WaitGroup{}
 	ready := make(chan struct{})
 	wg.Go(func() {
-		listener := runtimex.PanicOnError1(srv.ListenTCP(netip.MustParseAddrPort("10.0.0.1:80")))
+		listenCfg := uis.NewListenConfig(srv)
+		listener := runtimex.PanicOnError1(listenCfg.Listen(ctx, "tcp", "10.0.0.1:80"))
 		close(ready)
 		conn := runtimex.PanicOnError1(listener.Accept())
 		message := []byte("Hello, world!\n")
@@ -43,8 +47,8 @@ func Example_clientDownload() {
 	messagech := make(chan []byte, 1)
 	wg.Go(func() {
 		<-ready
-		ctx := context.Background()
-		conn := runtimex.PanicOnError1(clnt.DialTCP(ctx, netip.MustParseAddrPort("10.0.0.1:80")))
+		connector := uis.NewConnector(clnt)
+		conn := runtimex.PanicOnError1(connector.DialContext(ctx, "tcp", "10.0.0.1:80"))
 		buffer := make([]byte, 1024)
 		count := runtimex.PanicOnError1(conn.Read(buffer))
 		messagech <- buffer[:count]
