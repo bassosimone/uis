@@ -17,23 +17,21 @@ import (
 
 func TestConnectorDialContextRejectsDomain(t *testing.T) {
 	vnic := uis.NewVNIC(uis.MTUEthernet, nil)
-	stack, err := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
-	require.NoError(t, err)
+	stack := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
 	t.Cleanup(stack.Close)
 
 	connector := uis.NewConnector(stack)
-	_, err = connector.DialContext(context.Background(), "udp", "example.com:53")
+	_, err := connector.DialContext(context.Background(), "udp", "example.com:53")
 	require.Error(t, err)
 }
 
 func TestConnectorDialContextRejectsUnknownNetwork(t *testing.T) {
 	vnic := uis.NewVNIC(uis.MTUEthernet, nil)
-	stack, err := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
-	require.NoError(t, err)
+	stack := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
 	t.Cleanup(stack.Close)
 
 	connector := uis.NewConnector(stack)
-	_, err = connector.DialContext(context.Background(), "tcp4", "10.0.0.1:80")
+	_, err := connector.DialContext(context.Background(), "tcp4", "10.0.0.1:80")
 	require.Error(t, err)
 	assert.True(t, errors.Is(err, syscall.EPROTOTYPE))
 }

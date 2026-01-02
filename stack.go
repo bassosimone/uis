@@ -9,9 +9,9 @@ package uis
 
 import (
 	"context"
-	"errors"
 	"net/netip"
 
+	"github.com/bassosimone/runtimex"
 	"gvisor.dev/gvisor/pkg/tcpip"
 	"gvisor.dev/gvisor/pkg/tcpip/adapters/gonet"
 	"gvisor.dev/gvisor/pkg/tcpip/header"
@@ -35,7 +35,7 @@ type Stack struct {
 const stackNICID = 1
 
 // NewStack creates a new [*Stack] using a [stack.LinkEndpoint].
-func NewStack(vnic stack.LinkEndpoint, addrs ...netip.Addr) (*Stack, error) {
+func NewStack(vnic stack.LinkEndpoint, addrs ...netip.Addr) *Stack {
 	// 1. create options for the new stack
 	stackOptions := stack.Options{
 		NetworkProtocols: []stack.NetworkProtocolFactory{
@@ -55,17 +55,13 @@ func NewStack(vnic stack.LinkEndpoint, addrs ...netip.Addr) (*Stack, error) {
 	nsp := stack.New(stackOptions)
 
 	// 3. attach the provided NIC to the gvisor stack
-	if err := nsp.CreateNIC(stackNICID, vnic); err != nil {
-		return nil, errors.New(err.String())
-	}
+	runtimex.Assert(nsp.CreateNIC(stackNICID, vnic) == nil)
 
 	// 4. configure all the provided addresses
 	for _, addr := range addrs {
 		protoAddr := stackAddrToProtocolAddress(addr)
 		properties := stack.AddressProperties{}
-		if err := nsp.AddProtocolAddress(stackNICID, protoAddr, properties); err != nil {
-			return nil, errors.New(err.String())
-		}
+		runtimex.Assert(nsp.AddProtocolAddress(stackNICID, protoAddr, properties) == nil)
 	}
 
 	// 5. add default routes for both protocol families
@@ -78,7 +74,7 @@ func NewStack(vnic stack.LinkEndpoint, addrs ...netip.Addr) (*Stack, error) {
 		NIC:         stackNICID,
 	})
 
-	return &Stack{nsp}, nil
+	return &Stack{nsp}
 }
 
 func stackAddrToProtocolAddress(addr netip.Addr) tcpip.ProtocolAddress {

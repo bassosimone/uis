@@ -107,10 +107,7 @@ func (ix *Internet) AddRoute(vnic *VNIC, addrs ...netip.Addr) error {
 // 3. [*Internet.AddrRoute] to create the return routes
 func (ix *Internet) NewStack(mtu uint32, addrs ...netip.Addr) (*Stack, error) {
 	vnic := ix.NewVNIC(mtu)
-	stack, err := NewStack(vnic, addrs...)
-	if err != nil {
-		return nil, err
-	}
+	stack := NewStack(vnic, addrs...)
 	if err := ix.AddRoute(vnic, addrs...); err != nil {
 		return nil, err
 	}

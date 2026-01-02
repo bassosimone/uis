@@ -16,8 +16,7 @@ import (
 
 func TestPacketConnWrapperUDPIPv6DeadlinesAndAddrs(t *testing.T) {
 	vnic := uis.NewVNIC(uis.MTUMinimumIPv6, nil)
-	stack, err := uis.NewStack(vnic, netip.MustParseAddr("2001:db8::1"))
-	require.NoError(t, err)
+	stack := uis.NewStack(vnic, netip.MustParseAddr("2001:db8::1"))
 	t.Cleanup(stack.Close)
 
 	listenCfg := uis.NewListenConfig(stack)

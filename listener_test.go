@@ -17,54 +17,49 @@ import (
 
 func TestListenConfigListenRejectsUnknownNetwork(t *testing.T) {
 	vnic := uis.NewVNIC(uis.MTUEthernet, nil)
-	stack, err := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
-	require.NoError(t, err)
+	stack := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
 	t.Cleanup(stack.Close)
 
 	listenCfg := uis.NewListenConfig(stack)
-	_, err = listenCfg.Listen(context.Background(), "tcp4", "10.0.0.1:80")
+	_, err := listenCfg.Listen(context.Background(), "tcp4", "10.0.0.1:80")
 	require.Error(t, err)
 	assert.True(t, errors.Is(err, syscall.EPROTOTYPE))
 }
 
 func TestListenConfigListenRejectsDomain(t *testing.T) {
 	vnic := uis.NewVNIC(uis.MTUEthernet, nil)
-	stack, err := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
-	require.NoError(t, err)
+	stack := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
 	t.Cleanup(stack.Close)
 
 	listenCfg := uis.NewListenConfig(stack)
-	_, err = listenCfg.Listen(context.Background(), "tcp", "example.com:80")
+	_, err := listenCfg.Listen(context.Background(), "tcp", "example.com:80")
 	require.Error(t, err)
 }
 
 func TestListenConfigListenPacketRejectsUnknownNetwork(t *testing.T) {
 	vnic := uis.NewVNIC(uis.MTUEthernet, nil)
-	stack, err := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
-	require.NoError(t, err)
+	stack := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
 	t.Cleanup(stack.Close)
 
 	listenCfg := uis.NewListenConfig(stack)
-	_, err = listenCfg.ListenPacket(context.Background(), "udp4", "10.0.0.1:53")
+	_, err := listenCfg.ListenPacket(context.Background(), "udp4", "10.0.0.1:53")
 	require.Error(t, err)
 	assert.True(t, errors.Is(err, syscall.EPROTOTYPE))
 }
 
 func TestListenConfigListenPacketRejectsDomain(t *testing.T) {
 	vnic := uis.NewVNIC(uis.MTUEthernet, nil)
-	stack, err := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
-	require.NoError(t, err)
+	stack := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
 	t.Cleanup(stack.Close)
 
 	listenCfg := uis.NewListenConfig(stack)
-	_, err = listenCfg.ListenPacket(context.Background(), "udp", "example.com:53")
+	_, err := listenCfg.ListenPacket(context.Background(), "udp", "example.com:53")
 	require.Error(t, err)
 }
 
 func TestListenConfigListenAddressInUse(t *testing.T) {
 	vnic := uis.NewVNIC(uis.MTUEthernet, nil)
-	stack, err := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
-	require.NoError(t, err)
+	stack := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
 	t.Cleanup(stack.Close)
 
 	listenCfg := uis.NewListenConfig(stack)
@@ -78,8 +73,7 @@ func TestListenConfigListenAddressInUse(t *testing.T) {
 
 func TestListenConfigListenPacketAddressInUse(t *testing.T) {
 	vnic := uis.NewVNIC(uis.MTUEthernet, nil)
-	stack, err := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
-	require.NoError(t, err)
+	stack := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
 	t.Cleanup(stack.Close)
 
 	listenCfg := uis.NewListenConfig(stack)
@@ -93,8 +87,7 @@ func TestListenConfigListenPacketAddressInUse(t *testing.T) {
 
 func TestListenerWrapperAcceptAfterClose(t *testing.T) {
 	vnic := uis.NewVNIC(uis.MTUEthernet, nil)
-	stack, err := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
-	require.NoError(t, err)
+	stack := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
 	t.Cleanup(stack.Close)
 
 	listenCfg := uis.NewListenConfig(stack)
@@ -108,8 +101,7 @@ func TestListenerWrapperAcceptAfterClose(t *testing.T) {
 
 func TestListenerWrapperAddr(t *testing.T) {
 	vnic := uis.NewVNIC(uis.MTUEthernet, nil)
-	stack, err := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
-	require.NoError(t, err)
+	stack := uis.NewStack(vnic, netip.MustParseAddr("10.0.0.1"))
 	t.Cleanup(stack.Close)
 
 	listenCfg := uis.NewListenConfig(stack)
