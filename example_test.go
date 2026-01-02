@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"net/netip"
+	"os"
 	"sync"
 
 	"github.com/bassosimone/runtimex"
@@ -63,7 +64,8 @@ func Example_tcpDownloadIPv4() {
 	}()
 
 	// route and capture packets in the foreground
-	trace := runtimex.PanicOnError1(uis.NewPcapTrace("tcpDownloadIPv4.pcap", uis.MTUJumbo))
+	traceFile := runtimex.PanicOnError1(os.Create("tcpDownloadIPv4.pcap"))
+	trace := uis.NewPcapTrace(traceFile, uis.MTUJumbo)
 loop:
 	for {
 		select {
@@ -137,7 +139,8 @@ func Example_udpEchoIPv4() {
 	}()
 
 	// route and capture packets in the foreground
-	trace := runtimex.PanicOnError1(uis.NewPcapTrace("udpEchoIPv4.pcap", uis.MTUJumbo))
+	traceFile := runtimex.PanicOnError1(os.Create("udpEchoIPv4.pcap"))
+	trace := uis.NewPcapTrace(traceFile, uis.MTUJumbo)
 loop:
 	for {
 		select {
@@ -211,7 +214,8 @@ func Example_udpEchoIPv6() {
 	}()
 
 	// route and capture packets in the foreground
-	trace := runtimex.PanicOnError1(uis.NewPcapTrace("udpEchoIPv6.pcap", uis.MTUJumbo))
+	traceFile := runtimex.PanicOnError1(os.Create("udpEchoIPv6.pcap"))
+	trace := uis.NewPcapTrace(traceFile, uis.MTUJumbo)
 loop:
 	for {
 		select {

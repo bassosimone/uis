@@ -9,7 +9,7 @@ package uis
 import (
 	"context"
 	"errors"
-	"os"
+	"io"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -39,9 +39,6 @@ type PcapTrace struct {
 	// errch contains the error returned by the background goroutine.
 	errch chan error
 
-	// filep is the open file we're using.
-	filep *os.File
-
 	// snaps contains an snaps snapshot.
 	snaps chan pcapSnapshot
 
@@ -50,16 +47,13 @@ type PcapTrace struct {
 
 	// snapSize is the number of bytes to capture.
 	snapSize uint16
+
+	// wc is the open writer we're using.
+	wc io.WriteCloser
 }
 
 // NewPcapTrace creates a new [*PcapTrace] instance.
-func NewPcapTrace(filename string, snapSize uint16) (*PcapTrace, error) {
-	// Open the PCAP file
-	filep, err := os.Create(filename)
-	if err != nil {
-		return nil, err
-	}
-
+func NewPcapTrace(wc io.WriteCloser, snapSize uint16) *PcapTrace {
 	// Initialize the trace struct
 	ctx, cancel := context.WithCancel(context.Background())
 	const manyPackets = 4096
@@ -67,15 +61,15 @@ func NewPcapTrace(filename string, snapSize uint16) (*PcapTrace, error) {
 		cancel:   cancel,
 		dropped:  atomic.Uint64{},
 		errch:    make(chan error, 1),
-		filep:    filep,
 		snaps:    make(chan pcapSnapshot, manyPackets),
 		once:     sync.Once{},
 		snapSize: snapSize,
+		wc:       wc,
 	}
 
 	// Start the worker and return
 	go tr.saveLoop(ctx)
-	return tr, nil
+	return tr
 }
 
 // Dump dumps the information about the given raw IPv4/IPv6 packet.
@@ -101,7 +95,7 @@ func (tr *PcapTrace) Dropped() uint64 {
 // saveLoop is the loop that dumps packets
 func (tr *PcapTrace) saveLoop(ctx context.Context) {
 	// Write the PCAP header
-	w := pcapgo.NewWriter(tr.filep)
+	w := pcapgo.NewWriter(tr.wc)
 	if err := w.WriteFileHeader(uint32(tr.snapSize), layers.LinkTypeRaw); err != nil {
 		tr.errch <- err
 		return
@@ -157,7 +151,7 @@ func (tr *PcapTrace) Close() (err error) {
 		err1 := <-tr.errch
 
 		// close the open capture file
-		err2 := tr.filep.Close()
+		err2 := tr.wc.Close()
 
 		// assemble a common error (nil on success)
 		err = errors.Join(err1, err2)

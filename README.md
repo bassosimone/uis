@@ -15,6 +15,7 @@ Basic usage is like:
 import (
 	"context"
 	"net/netip"
+	"os"
 	"sync"
 
 	"github.com/bassosimone/runtimex"
@@ -61,7 +62,8 @@ go func() {
 }()
 
 // Route and capture packets between stacks until both sides finish.
-trace := runtimex.PanicOnError1(uis.NewPcapTrace("capture.pcap", uis.MTUEthernet))
+traceFile := runtimex.PanicOnError1(os.Create("capture.pcap"))
+trace := uis.NewPcapTrace(traceFile, uis.MTUEthernet)
 loop:
 for {
 	select {
