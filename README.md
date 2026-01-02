@@ -60,17 +60,19 @@ go func() {
 	close(stopped)
 }()
 
-// Route packets between stacks until both sides finish.
+// Route and capture packets between stacks until both sides finish.
+trace := runtimex.PanicOnError1(uis.NewPcapTrace("capture.pcap", uis.MTUEthernet))
 loop:
 for {
 	select {
-	case pkt := <-internet.InFlight():
-		// TODO: alter/drop/inspect packets here
-		_ = internet.Deliver(pkt)
+	case frame := <-internet.InFlight():
+		trace.Dump(frame.Packet)
+		_ = internet.Deliver(frame)
 	case <-stopped:
 		break loop
 	}
 }
+runtimex.PanicOnError0(trace.Close())
 ```
 
 The [example_test.go](example_test.go) file shows a complete example.

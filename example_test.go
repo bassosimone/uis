@@ -14,7 +14,7 @@ import (
 
 // This example creates a client and the server and the client
 // downloads a small number of bytes from the server.
-func Example_clientDownload() {
+func Example_tcpDownloadIPv4() {
 	// create the internet instance.
 	ix := uis.NewInternet(uis.InternetOptionMaxInflight(256))
 
@@ -63,16 +63,18 @@ func Example_clientDownload() {
 	}()
 
 	// route packets in the foreground
+	trace := runtimex.PanicOnError1(uis.NewPcapTrace("tcpDownloadIPv4.pcap", uis.MTUJumbo))
 loop:
 	for {
 		select {
 		case frame := <-ix.InFlight():
-			// Here is where you'll potentially mess with packets
+			trace.Dump(frame.Packet)
 			_ = ix.Deliver(frame)
 		case <-stopped:
 			break loop
 		}
 	}
+	runtimex.PanicOnError0(trace.Close())
 
 	// receive and print the server message
 	message := <-messagech
@@ -135,16 +137,18 @@ func Example_udpEchoIPv4() {
 	}()
 
 	// route packets in the foreground
+	trace := runtimex.PanicOnError1(uis.NewPcapTrace("udpEchoIPv4.pcap", uis.MTUJumbo))
 loop:
 	for {
 		select {
 		case frame := <-ix.InFlight():
-			// Here is where you'll potentially mess with packets
+			trace.Dump(frame.Packet)
 			_ = ix.Deliver(frame)
 		case <-stopped:
 			break loop
 		}
 	}
+	runtimex.PanicOnError0(trace.Close())
 
 	// receive and print the echoed message
 	message := <-messagech
