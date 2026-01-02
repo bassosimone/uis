@@ -22,9 +22,6 @@
 // raw IP packets around) and we don't model multiple hops. These choices keep
 // this package focused on fundamental primitives rather than full frameworks.
 //
-// On the application level side, a [*Stack] allows to create basic TCP and
-// UDP connections via methods such as [*Stack.DialTCP].
-//
 // The [*PCAPTrace] type allows you to capture packets in flight in a PCAP format
 // so that you can inspect what happened using tools such as wireshark.
 package uis
