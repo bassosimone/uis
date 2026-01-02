@@ -62,7 +62,7 @@ func Example_tcpDownloadIPv4() {
 		close(stopped)
 	}()
 
-	// route packets in the foreground
+	// route and capture packets in the foreground
 	trace := runtimex.PanicOnError1(uis.NewPcapTrace("tcpDownloadIPv4.pcap", uis.MTUJumbo))
 loop:
 	for {
@@ -136,7 +136,7 @@ func Example_udpEchoIPv4() {
 		close(stopped)
 	}()
 
-	// route packets in the foreground
+	// route and capture packets in the foreground
 	trace := runtimex.PanicOnError1(uis.NewPcapTrace("udpEchoIPv4.pcap", uis.MTUJumbo))
 loop:
 	for {
@@ -156,5 +156,79 @@ loop:
 
 	// Output:
 	// Hello, IPv4!
+	//
+}
+
+// This example creates a client and server using UDP over IPv6.
+// The server echoes back whatever it receives.
+func Example_udpEchoIPv6() {
+	// create the internet instance.
+	ix := uis.NewInternet(uis.InternetOptionMaxInflight(256))
+
+	// create the server and client stacks
+	const mtu = uis.MTUJumbo
+	srv := runtimex.PanicOnError1(ix.NewStack(mtu, netip.MustParseAddr("2001:db8::1")))
+	defer srv.Close()
+
+	clnt := runtimex.PanicOnError1(ix.NewStack(mtu, netip.MustParseAddr("2001:db8::2")))
+	defer clnt.Close()
+
+	// create a context used by connector and listener
+	ctx := context.Background()
+
+	// run the server in the background
+	wg := &sync.WaitGroup{}
+	ready := make(chan struct{})
+	wg.Go(func() {
+		listenCfg := uis.NewListenConfig(srv)
+		pconn := runtimex.PanicOnError1(listenCfg.ListenPacket(ctx, "udp", "[2001:db8::1]:53"))
+		defer pconn.Close()
+		close(ready)
+		buffer := make([]byte, 2048)
+		count, addr := runtimex.PanicOnError2(pconn.ReadFrom(buffer))
+		_ = runtimex.PanicOnError1(pconn.WriteTo(buffer[:count], addr))
+	})
+
+	// run the client in the background
+	messagech := make(chan []byte, 1)
+	wg.Go(func() {
+		<-ready
+		connector := uis.NewConnector(clnt)
+		conn := runtimex.PanicOnError1(connector.DialContext(ctx, "udp", "[2001:db8::1]:53"))
+		message := []byte("Hello, IPv6!\n")
+		_ = runtimex.PanicOnError1(conn.Write(message))
+		buffer := make([]byte, 1024)
+		count := runtimex.PanicOnError1(conn.Read(buffer))
+		messagech <- buffer[:count]
+		runtimex.PanicOnError0(conn.Close())
+	})
+
+	// know when both goroutines have stopped
+	stopped := make(chan struct{})
+	go func() {
+		wg.Wait()
+		close(stopped)
+	}()
+
+	// route and capture packets in the foreground
+	trace := runtimex.PanicOnError1(uis.NewPcapTrace("udpEchoIPv6.pcap", uis.MTUJumbo))
+loop:
+	for {
+		select {
+		case frame := <-ix.InFlight():
+			trace.Dump(frame.Packet)
+			_ = ix.Deliver(frame)
+		case <-stopped:
+			break loop
+		}
+	}
+	runtimex.PanicOnError0(trace.Close())
+
+	// receive and print the echoed message
+	message := <-messagech
+	fmt.Printf("%s", string(message))
+
+	// Output:
+	// Hello, IPv6!
 	//
 }
