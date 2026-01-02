@@ -140,7 +140,7 @@ func stackAddrPortToNetworkProtocolNumber(epnt netip.AddrPort) tcpip.NetworkProt
 	}
 }
 
-// Close closes the resources used by the [*Stack].
+// Close shuts down the stack and waits for the NIC teardown to finish.
 func (sx *Stack) Close() {
-	sx.Stack.Close()
+	sx.Stack.Destroy()
 }
