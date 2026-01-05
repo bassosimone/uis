@@ -3,7 +3,7 @@
 [![GoDoc](https://pkg.go.dev/badge/github.com/bassosimone/uis)](https://pkg.go.dev/github.com/bassosimone/uis) [![Build Status](https://github.com/bassosimone/uis/actions/workflows/go.yml/badge.svg)](https://github.com/bassosimone/uis/actions) [![codecov](https://codecov.io/gh/bassosimone/uis/branch/main/graph/badge.svg)](https://codecov.io/gh/bassosimone/uis)
 
 Userspace Internet Simulation (`uis`) is a Go package that provides
-you with the ability to: create userspace TCP/IP client and server
+you with the ability to create userspace TCP/IP client and server
 stacks that communicate exchanging raw IP packets.
 
 As such, it is a fundamental building block for writing integration
