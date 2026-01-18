@@ -1,5 +1,5 @@
-github.com/bassosimone/iotest v0.0.0-20260102113406-350280d0bb75 h1:opyvzPaQO37U9EwlLNVfETGRQoWyBdnOZwHQeTZpOq8=
-github.com/bassosimone/iotest v0.0.0-20260102113406-350280d0bb75/go.mod h1:ghFmiK65x7i+XX7wq142BJdTN9lLlxdki5yuRAdKQf8=
+github.com/bassosimone/iotest v0.0.0-20260108162419-cc1a50b01693 h1:R9z1MEIO9XU9MTAeEWBzhU93IOEKDk4UIRyTmhhQFKY=
+github.com/bassosimone/iotest v0.0.0-20260108162419-cc1a50b01693/go.mod h1:tcrllxHmwim0qCBvmbyQs0CGo4s4HwMaZwblEzp6eDk=
 github.com/bassosimone/runtimex v0.0.0-20260108162100-336f3823f6b7 h1:9qKFMaKc84pZ1i7FMUGLMqo56rv4miCd4/+qlH9SWDI=
 github.com/bassosimone/runtimex v0.0.0-20260108162100-336f3823f6b7/go.mod h1:GDr46yuJzuDkzOMI1/9Voo3s7VmYBU/6pkuaI5FR7gE=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
