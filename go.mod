@@ -7,7 +7,7 @@ require (
 	github.com/bassosimone/runtimex v0.0.0-20260108162100-336f3823f6b7
 	github.com/google/gopacket v1.1.19
 	github.com/stretchr/testify v1.11.1
-	gvisor.dev/gvisor v0.0.0-20260210201108-b3aa83da69bd
+	gvisor.dev/gvisor v0.0.0-20260212224830-e5b717ac263e
 )
 
 require (
