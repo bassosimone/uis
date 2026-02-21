@@ -1,2 +1,4 @@
-/*.pcap
+*.pcap
+/benchmark
+/benchmark.exe
 /coverage.out

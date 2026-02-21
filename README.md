@@ -147,14 +147,28 @@ go get github.com/bassosimone/uis
 ## Development
 
 To run the tests:
+
 ```sh
 go test -v .
 ```
 
 To measure test coverage:
+
 ```sh
 go test -v -cover .
 ```
+
+## Benchmark
+
+The [cmd/benchmark/main.go](cmd/benchmark/main.go) file implements
+a benchmark measuring the download speed:
+
+``` sh
+go build -v ./cmd/benchmark
+./benchmark
+```
+
+Use `./benchmark -help` to get help.
 
 ## License
 
