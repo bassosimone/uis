@@ -7,7 +7,7 @@ require (
 	github.com/bassosimone/runtimex v0.0.0-20260108162100-336f3823f6b7
 	github.com/google/gopacket v1.1.19
 	github.com/stretchr/testify v1.11.1
-	gvisor.dev/gvisor v0.0.0-20260220231412-fe30adbe8e25
+	gvisor.dev/gvisor v0.0.0-20260224225140-573d5e7127a8
 )
 
 require (
@@ -15,7 +15,7 @@ require (
 	github.com/google/btree v1.1.3 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa // indirect
-	golang.org/x/net v0.50.0 // indirect
+	golang.org/x/net v0.51.0 // indirect
 	golang.org/x/sys v0.41.0 // indirect
 	golang.org/x/time v0.14.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
