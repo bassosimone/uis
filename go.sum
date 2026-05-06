@@ -1,7 +1,7 @@
-github.com/bassosimone/iotest v0.0.0-20260426212837-fa8b1585cfa5 h1:6dmAN7cOwsQeFq1pzX4ilHHPnvmOSWAjuCi2rd6RDFY=
-github.com/bassosimone/iotest v0.0.0-20260426212837-fa8b1585cfa5/go.mod h1:3L7N5GvohVv1F3zd5IQ0olXRLDYIXWW9Mc4eG58Le0w=
-github.com/bassosimone/runtimex v0.0.0-20260426205938-f859235d82e0 h1:wyPaBOiRsojCYgBtGSNWEZOn8HAJunrWYfduNGmc59A=
-github.com/bassosimone/runtimex v0.0.0-20260426205938-f859235d82e0/go.mod h1:GDr46yuJzuDkzOMI1/9Voo3s7VmYBU/6pkuaI5FR7gE=
+github.com/bassosimone/iotest v0.0.0-20260506051330-9d159be61497 h1:dZ2lNZi24GgwVbfzQjwNBAXv4hD5CDqMxdqTQMU+sbQ=
+github.com/bassosimone/iotest v0.0.0-20260506051330-9d159be61497/go.mod h1:npbI/mUlHQSBoA1XocBVueDfPGJnGZQOjChuegKLBOA=
+github.com/bassosimone/runtimex v0.0.0-20260430082757-ec3a7b516e79 h1:VQxTT57beKhMX5Bcg3YpUArUG9l2zNqAhcjddzFmwSg=
+github.com/bassosimone/runtimex v0.0.0-20260430082757-ec3a7b516e79/go.mod h1:GDr46yuJzuDkzOMI1/9Voo3s7VmYBU/6pkuaI5FR7gE=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/google/btree v1.1.3 h1:CVpQJjYgC4VbzxeGVHfvZrv1ctoYCAI8vbl07Fcxlyg=
@@ -36,5 +36,5 @@ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
-gvisor.dev/gvisor v0.0.0-20260424223757-190f2cb4c65a h1:2RMavxrJ0lVzLKc2/nNE9HI2XSMunqhlI8vcn7PlElY=
-gvisor.dev/gvisor v0.0.0-20260424223757-190f2cb4c65a/go.mod h1:xQ2PWgHmWJA/Ph4i1q1jBm39BKhc3W0DXqWoDSyuBOY=
+gvisor.dev/gvisor v0.0.0-20260505232712-673442e0d361 h1://w7kuohVWEPZ+5Agqdegr0/nQ772l5SSCeTCIWUeXc=
+gvisor.dev/gvisor v0.0.0-20260505232712-673442e0d361/go.mod h1:xQ2PWgHmWJA/Ph4i1q1jBm39BKhc3W0DXqWoDSyuBOY=
