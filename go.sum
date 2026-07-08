@@ -1,7 +1,7 @@
-github.com/bassosimone/iotest v0.0.0-20260615120301-80d65feb58b0 h1:+vjzcPRzdP3su93pLQCLAvEQpwmPAXplSvjagHazuD0=
-github.com/bassosimone/iotest v0.0.0-20260615120301-80d65feb58b0/go.mod h1:GdX9BtGCgBjdG7cZ9H//VwDVtR/+f40+5FkUC1sFS4Q=
-github.com/bassosimone/runtimex v0.0.0-20260615112505-ee72c4f0769e h1:J3ERL+Iben+Aog/hfy+qcRuhzH6dZceq/v1GuEyqlPA=
-github.com/bassosimone/runtimex v0.0.0-20260615112505-ee72c4f0769e/go.mod h1:GDr46yuJzuDkzOMI1/9Voo3s7VmYBU/6pkuaI5FR7gE=
+github.com/bassosimone/iotest v0.0.0-20260708091559-c2015e7a62d5 h1:eXz8e316h8PqGljQ673g5qA0ZL3x8IwsDI3rr2Qq8Fc=
+github.com/bassosimone/iotest v0.0.0-20260708091559-c2015e7a62d5/go.mod h1:TKMfAIkpNu1xyoVerJjV6Ct2SC6ueOPbJmPYF9c8T4s=
+github.com/bassosimone/runtimex v0.0.0-20260708083610-01df83158243 h1:eqkVFAGD50avpsTGPI65++xpau6lWtud+pPhFergzBM=
+github.com/bassosimone/runtimex v0.0.0-20260708083610-01df83158243/go.mod h1:GDr46yuJzuDkzOMI1/9Voo3s7VmYBU/6pkuaI5FR7gE=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/google/btree v1.1.3 h1:CVpQJjYgC4VbzxeGVHfvZrv1ctoYCAI8vbl07Fcxlyg=
@@ -36,5 +36,5 @@ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
-gvisor.dev/gvisor v0.0.0-20260622202500-b859e3a10a38 h1:JUVEaeTIR4DS13PGZp/WozQ8Cd/SHNaT8B4Yke25S80=
-gvisor.dev/gvisor v0.0.0-20260622202500-b859e3a10a38/go.mod h1:8aLQqUBHDH8fY5y60lzmwDpMMbQCcT3EBfoSwhfaGCY=
+gvisor.dev/gvisor v0.0.0-20260707220614-138036330864 h1:HH4mMnXmmWZAZHJUp/LXkmFVAToH3CbOSK7y/GHRiVU=
+gvisor.dev/gvisor v0.0.0-20260707220614-138036330864/go.mod h1:8aLQqUBHDH8fY5y60lzmwDpMMbQCcT3EBfoSwhfaGCY=
