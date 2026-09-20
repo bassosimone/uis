@@ -3,11 +3,11 @@ module github.com/bassosimone/uis
 go 1.26.3
 
 require (
-	github.com/bassosimone/iotest v0.0.0-20260828082326-40540edd179d
-	github.com/bassosimone/runtimex v0.0.0-20260828074549-6e2e561f98d1
+	github.com/bassosimone/iotest v0.0.0-20260920134413-5155dd099827
+	github.com/bassosimone/runtimex v0.0.0-20260920130843-b72080259a60
 	github.com/google/gopacket v1.1.19
 	github.com/stretchr/testify v1.12.1
-	gvisor.dev/gvisor v0.0.0-20260909030358-2b21ae51bbaa
+	gvisor.dev/gvisor v0.0.0-20260919055340-501da953ee38
 )
 
 require (
